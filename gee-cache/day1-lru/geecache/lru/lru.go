@@ -16,7 +16,7 @@ type entry struct {
 	key   string
 	value Value
 }
-
+//ce yiba
 // Value use Len to count how many bytes it takes
 type Value interface {
 	Len() int
