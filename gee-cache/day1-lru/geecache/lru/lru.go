@@ -4,14 +4,15 @@ import "container/list"
 
 // Cache is a LRU cache. It is not safe for concurrent access.
 type Cache struct {
-	maxBytes int64
-	nbytes   int64
+	maxBytes int64  //允许使用的最大内存
+	nbytes   int64  //当前已经使用的内存
 	ll       *list.List
-	cache    map[string]*list.Element
+	cache    map[string]*list.Element   //用map来存储实际的数据
 	// optional and executed when an entry is purged.
-	OnEvicted func(key string, value Value)
+	OnEvicted func(key string, value Value)  //某条记录被移除时的回调函数
 }
 
+//双向链表中的数据类型，存在着key是因为在remove掉map时比较方便
 type entry struct {
 	key   string
 	value Value
@@ -61,7 +62,7 @@ func (c *Cache) Get(key string) (value Value, ok bool) {
 
 // RemoveOldest removes the oldest item
 func (c *Cache) RemoveOldest() {
-	ele := c.ll.Back()
+	ele := c.ll.Back() //因为每get一个key的时候，都会把value放到front，所以移除value时，是从back拿的
 	if ele != nil {
 		c.ll.Remove(ele)
 		kv := ele.Value.(*entry)
