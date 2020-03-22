@@ -50,7 +50,7 @@ func NewGroup(name string, cacheBytes int64, getter Getter) *Group {
 // GetGroup returns the named group previously created with NewGroup, or
 // nil if there's no such group.
 func GetGroup(name string) *Group {
-	mu.RLock()
+	mu.RLock()   //以只读锁来获取group
 	g := groups[name]
 	mu.RUnlock()
 	return g
@@ -74,14 +74,15 @@ func (g *Group) load(key string) (value ByteView, err error) {
 	return g.getLocally(key)
 }
 
+//从数据源获取数据，如mysql，mongo
 func (g *Group) getLocally(key string) (ByteView, error) {
-	bytes, err := g.getter.Get(key)
+	bytes, err := g.getter.Get(key) //使用group特有的getter的get方法，get方法可以根据不同的原始存储实体进行实例化
 	if err != nil {
 		return ByteView{}, err
 
 	}
 	value := ByteView{b: cloneBytes(bytes)}
-	g.populateCache(key, value)
+	g.populateCache(key, value) //将值存入cache
 	return value, nil
 }
 
