@@ -7,19 +7,19 @@ import (
 )
 
 // A Group is a cache namespace and associated data loaded spread over
-type Group struct {
+type Group struct {  //group是一个整体的抽象，对外就只暴露group的api
 	name      string
 	getter    Getter
 	mainCache cache
 }
 
 // A Getter loads data for a key.
-type Getter interface {
+type Getter interface {  //精华，是依赖注入吗？根据不同的数据源来获取不同源的数据
 	Get(key string) ([]byte, error)
 }
 
 // A GetterFunc implements Getter with a function.
-type GetterFunc func(key string) ([]byte, error)
+type GetterFunc func(key string) ([]byte, error)  //GetterFunc实现了Get函数，所以是Getter类型
 
 // Get implements Getter interface function
 func (f GetterFunc) Get(key string) ([]byte, error) {
@@ -81,7 +81,9 @@ func (g *Group) getLocally(key string) (ByteView, error) {
 		return ByteView{}, err
 
 	}
-	value := ByteView{b: cloneBytes(bytes)}
+	// 选择 byte 类型是为了能够支持任意的数据类型的存储，例如字符串、图片等。
+	//b 是只读的，使用 ByteSlice() 方法返回一个拷贝，防止缓存值被外部程序修改。
+	value := ByteView{b: cloneBytes(bytes)} //为什么要cloneBytes？
 	g.populateCache(key, value) //将值存入cache
 	return value, nil
 }

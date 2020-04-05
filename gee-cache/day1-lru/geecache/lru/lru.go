@@ -14,8 +14,8 @@ type Cache struct {
 
 //双向链表中的数据类型，存在着key是因为在remove掉map时比较方便
 type entry struct {
-	key   string
-	value Value
+	key   string //缓存key
+	value Value  //缓存值
 }
 //ce yiba
 // Value use Len to count how many bytes it takes

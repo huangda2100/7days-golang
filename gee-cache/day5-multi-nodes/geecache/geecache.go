@@ -92,6 +92,7 @@ func (g *Group) load(key string) (value ByteView, err error) {
 	return g.getLocally(key)
 }
 
+//将值存入cache
 func (g *Group) populateCache(key string, value ByteView) {
 	g.mainCache.add(key, value)
 }
